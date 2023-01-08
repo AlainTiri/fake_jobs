@@ -1,16 +1,17 @@
-# This is a sample Python script.
-
-# Press Alt+Maj+X to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from model.predict import Model_SVM
+from fastapi import FastAPI
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+Maj+B to toggle the breakpoint.
+app = FastAPI()
+model = Model_SVM()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+@app.get("/predict/{description}")
+def predict(description: str):
+    return {"description": description, "p": model.predict_svm(description)}
+
