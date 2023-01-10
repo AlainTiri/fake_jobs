@@ -9,5 +9,5 @@ class Model_SVM:
     #         self.model = load(f)
 
     def predict_svm(self, to_predict):
-        r = self.model.predict(to_predict)
+        # r = self.model.predict(to_predict)
         return "prediction SVM"

@@ -1,4 +1,4 @@
-from model.predict import Model_SVM
+from app.model.predict import Model_SVM
 from fastapi import FastAPI
 
 
@@ -7,8 +7,8 @@ model = Model_SVM()
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+async def root():
+    return {"message": "Hello World"}
 
 
 @app.get("/predict/{description}")
