@@ -46,7 +46,6 @@ class Model_SVM:
     def predict(self, to_predict:str):
         to_predict:list = [self.preprocess(to_predict)]
         vec_to_predict = self.vectorizer.transform(to_predict).toarray()
-        # data = pd.DataFrame(vec_to_predict, columns=self.vectorizer.get_feature_names())
 
         return self.model.predict(vec_to_predict)
 
