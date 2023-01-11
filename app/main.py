@@ -1,17 +1,24 @@
-from app.model.predict import Model_SVM
+import app.model.predict as ml
 from fastapi import FastAPI
-
+import improvement.to_bigquery as to_BigQ
 
 app = FastAPI()
-model = Model_SVM()
+model = ml.Model_SVM()
+bigqueryHelper = to_BigQ.ToBigQuery()
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+def read_root():
+    return {"Hello": "World"}
 
 
-@app.get("/predict/{description}")
-def predict(description: str):
-    return {"description": description, "p": model.predict_svm(description)}
+@app.get("/fakes_jobs/{description}")
+def read_item(description: str):
+    prediction = model.predict(description)
+    answer = "Fake job" if prediction[0] == 1 else "True job"
+    try:
+        print(bigqueryHelper.sendToBQ(description, prediction[0]))
+    except Exception:
+        print("Error to BigQuery")
 
+    return {"prediction": answer, "description": description}
