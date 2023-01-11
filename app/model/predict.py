@@ -15,9 +15,9 @@ class Model_SVM:
         self.lemmatizer = WordNetLemmatizer()
         self.stopwords = stopwords.words('english')
 
+        """ For the V2, dowloading of the model on GCS """
         filename = './app/model/models/model_svm.pkl'
         with open(filename, 'rb') as f:
-            # load(f)
             self.model = pickle.load(f)
             self.perf_of_model = """
                 frac=0.07
@@ -66,5 +66,4 @@ class Model_SVM:
         tokens = text.split()
         tokens = [self.lemmatizer.lemmatize(word) for word in tokens if word not in self.stopwords]
 
-        clean_description = ' '.join(tokens)
-        return clean_description
+        return ' '.join(tokens)
