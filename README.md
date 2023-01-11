@@ -6,8 +6,8 @@ Model and create an API point for an AI that detects fake job ads in the US mark
 
 ### The dataset
 - A dataset comprising text descriptions of jobs and their true or false job status (0 or 1).
-- It is clearly unbalanced, because only 5% of the descriptions are labeled "false jobs".
-- There are many duplicates, which requires data engineering.
+- It is clearly unbalanced, because only 5% of the descriptions are labeled "false jobs". (True 95.7%, False 4.2%)
+- There are many duplicates, which requires data engineering (17880 => +-14000)
 
 ### Equation to solve:
 - There must be a balance between the short-term objective, the detection of false announcements, and the future improvement of the model.
