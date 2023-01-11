@@ -15,7 +15,7 @@ class Model_SVM:
         self.lemmatizer = WordNetLemmatizer()
         self.stopwords = stopwords.words('english')
 
-        """ For the V2, dowloading of the model on GCS """
+        # :todo For the V2, dowload the model from the cloud like Cloud Storage
         filename = './app/model/models/model_svm.pkl'
         with open(filename, 'rb') as f:
             self.model = pickle.load(f)

@@ -5,8 +5,8 @@
 #
 class Config:
     PROJECT_ID = 'fake_project'
-    OPTINS_DATASET = "input"
-    OPTINS_TABLE = "bigquery"
+    DATASET = "input"
+    TABLE = "bigquery"
     SERVICE_ACCOUNT_FILE = "../config/defaultserviceaccount.json"
 
 
@@ -22,4 +22,4 @@ class ToBigQuery:
     #     ]
 
     def sendToBQ(self, description, prediction):
-        return "uploading."
+        return "Send result to BigQuery for later improvement."
