@@ -1,6 +1,7 @@
 import app.model.predict as ml
 from fastapi import FastAPI
-import improvement.to_bigquery as to_BigQ
+import app.improvement.to_bigquery as to_BigQ
+
 
 app = FastAPI()
 model = ml.Model_SVM()
@@ -12,7 +13,7 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/fakes_jobs/{description}")
+@app.get("/job/{description}")
 def read_item(description: str):
     prediction = model.predict(description)
     answer = "Fake job" if prediction[0] == 1 else "True job"

@@ -9,8 +9,8 @@ COPY ./requirement.txt /code/requirement.txt
 
 #
 RUN pip install --no-cache-dir --upgrade -r /code/requirement.txt
-RUN pip install fastapi uvicorn
-EXPOSE 3000
+
+EXPOSE 5000
 #
 COPY ./app /app/app
 #

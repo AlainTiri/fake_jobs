@@ -11,11 +11,11 @@ from sklearn import svm
 class Model_SVM:
     def __init__(self):
         nltk.download('wordnet')
+        nltk.download('stopwords')
         self.lemmatizer = WordNetLemmatizer()
         self.stopwords = stopwords.words('english')
-        nltk.download('wordnet')
 
-        filename = '/models/model_svm.pkl'
+        filename = './app/model/models/model_svm.pkl'
         with open(filename, 'rb') as f:
             # load(f)
             self.model = pickle.load(f)
@@ -39,17 +39,16 @@ class Model_SVM:
                 0           188   1
                 1            57  72"""
 
-        filename_vect = "/models/vectorizer.pkl"
+        filename_vect = "./app/model//models/vectorizer.pkl"
         with open(filename_vect, 'rb') as f:
             self.vectorizer = pickle.load(f)
 
     def predict(self, to_predict:str):
         to_predict:list = [self.preprocess(to_predict)]
         vec_to_predict = self.vectorizer.transform(to_predict).toarray()
-        data = pd.DataFrame(vec_to_predict, columns=self.vectorizer.get_feature_names())
+        # data = pd.DataFrame(vec_to_predict, columns=self.vectorizer.get_feature_names())
 
-        r = self.model.predict(data)
-        return f"prediction SVM ou pas {to_predict}"
+        return self.model.predict(vec_to_predict)
 
     def preprocess(self, text):
         if type(text) is float:
