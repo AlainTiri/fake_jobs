@@ -5,6 +5,7 @@
 Modeling of a model of detection of fakes jobs and access to prediction with an API.
 
 
+                Reshape
                 0    0.611461
                 1    0.388539
                 Name: fraudulent, dtype: float64
