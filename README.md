@@ -19,6 +19,9 @@ The proposed model detects around 99% of real ads (recall score), but only 56% o
 At this level, it is possible to either hire someone to detect which is the right announcement, or to keep everything for the next model training.
 Everything works via FastAPI in a Docker.
 
+### The notebook with the training
+https://github.com/AlainTiri/fake_jobs/blob/master/app/model/trainers/with%20nltk.ipynb
+
 ### The technology stack:
 - Python + Jupyter Notebook
 - Scikit-learn
