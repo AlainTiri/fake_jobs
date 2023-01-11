@@ -13,8 +13,7 @@ from sklearn import svm
 lemmatizer = WordNetLemmatizer()
 stopwords = stopwords.words('english')
 
-import re
-
+""" Copy past from the notebook """
 
 def cleandataset(df):
     df["description"] = df["description"].str.replace("&amp;", "&", regex=False)
