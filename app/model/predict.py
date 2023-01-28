@@ -11,7 +11,7 @@ from sklearn import svm
 class Model_SVM:
     def __init__(self):
         nltk.download('wordnet')
-        nltk.download('stopwords')
+        nltk.download('stopWords')
         self.lemmatizer = WordNetLemmatizer()
         self.stopwords = stopwords.words('english')
 
