@@ -10,10 +10,13 @@ from sklearn.metrics import accuracy_score, classification_report
 
 from sklearn import svm
 
+nltk.download('stopwords')
+nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 stopwords = stopwords.words('english')
 
 """ Copy past from the notebook """
+
 
 def cleandataset(df):
     df["description"] = df["description"].str.replace("&amp;", "&", regex=False)
@@ -101,13 +104,14 @@ def trainer(df, model, df_fraud, df_true, frac: float):
 
     return {frac: {"model": model, "vectorizer": vec}}
 
-df = pd.read_csv("dataset.csv", sep = ";")
 
-df['description'] = df['description'].apply(lambda x : clean_data(x))
+df = pd.read_csv("C:/Users/alain/PycharmProjects/fake_jobs/app/model/data/dataset.csv", sep=";")
+
+df['description'] = df['description'].apply(lambda x: clean_data(x))
 df = cleandataset(df)
 
 # check class distribution
-print(df['fraudulent'].value_counts(normalize = True))
+print(df['fraudulent'].value_counts(normalize=True))
 
 df_fraud = df[df.fraudulent == 1]
 df_true = df[df.fraudulent == 0]

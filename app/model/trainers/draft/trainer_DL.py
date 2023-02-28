@@ -2,54 +2,49 @@ import time
 
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+# import seaborn as sns
+# import matplotlib.pyplot as plt
 
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 
-import transformers
+# import transformers
 from transformers import AutoModel, BertTokenizerFast, AdamW
 
 import torch
 import torch.nn as nn
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
-
 # specify GPU
 device = torch.device("cuda")
 
 """ Load dataset """
-df = pd.read_csv("model/data/dataset.csv", sep = ";")
+df = pd.read_csv("C:/Users/alain/PycharmProjects/fake_jobs/app/model/data/dataset.csv", sep=";")
 df.dropna(inplace=True)
 print(df.head())
 
 # check class distribution
 print(df.shape)
-print(df['fraudulent'].value_counts(normalize = True))
-
+print(df['fraudulent'].value_counts(normalize=True))
 
 """ Split dataset in train, val and test sets """
 X_train, X_temp, Y_train, Y_temp = train_test_split(df['description'], df['fraudulent'],
-                                                                    random_state=0,
-                                                                    test_size=0.2,
-                                                                    stratify=df['fraudulent'])
+                                                    random_state=0,
+                                                    test_size=0.2,
+                                                    stratify=df['fraudulent'])
 
 # we will use temp_text and temp_labels to create validation and test set
 X_val, X_test, Y_val, Y_test = train_test_split(X_temp, Y_temp,
-                                                                random_state=0,
-                                                                test_size=0.6,
-                                                                stratify=Y_temp)
-
+                                                random_state=0,
+                                                test_size=0.6,
+                                                stratify=Y_temp)
 
 """ import BERT-base pretrained model """
 bert = AutoModel.from_pretrained('bert-base-cased')
 
-
 """ import tokenizer and tokenizing """
 tokenizer = BertTokenizerFast.from_pretrained('bert-base-cased')
-
 
 # get length of all the messages in the train set
 # seq_len = [len(i.split()) for i in X_train]
@@ -60,7 +55,7 @@ max_seq_len = min([991, 512])
 # tokenize and encode sequences in the training set
 tokens_train = tokenizer.batch_encode_plus(
     X_train.tolist(),
-    max_length = max_seq_len,
+    max_length=max_seq_len,
     padding='max_length',
     truncation=True,
     return_token_type_ids=False
@@ -69,7 +64,7 @@ tokens_train = tokenizer.batch_encode_plus(
 # tokenize and encode sequences in the validation set
 tokens_val = tokenizer.batch_encode_plus(
     X_val.tolist(),
-    max_length = max_seq_len,
+    max_length=max_seq_len,
     padding='max_length',
     truncation=True,
     return_token_type_ids=False
@@ -78,12 +73,11 @@ tokens_val = tokenizer.batch_encode_plus(
 # tokenize and encode sequences in the test set
 tokens_test = tokenizer.batch_encode_plus(
     X_test.tolist(),
-    max_length = max_seq_len,
+    max_length=max_seq_len,
     padding='max_length',
     truncation=True,
     return_token_type_ids=False
 )
-
 
 """ Sentenses in tensors """
 # for train set
@@ -101,9 +95,8 @@ test_seq = torch.tensor(tokens_test['input_ids'])
 test_mask = torch.tensor(tokens_test['attention_mask'])
 test_y = torch.tensor(Y_test.tolist())
 
-
 """ Creation of DataLoaders """
-#define a batch size
+# define a batch size
 batch_size = 32
 
 # wrap tensors
@@ -122,15 +115,16 @@ val_data = TensorDataset(val_seq, val_mask, val_y)
 val_sampler = SequentialSampler(val_data)
 
 # dataLoader for validation set
-val_dataloader = DataLoader(val_data, sampler = val_sampler, batch_size=batch_size)
+val_dataloader = DataLoader(val_data, sampler=val_sampler, batch_size=batch_size)
 
 """ Freezing of BERT parameters """
 # freeze all the parameters
 for param in bert.parameters():
     param.requires_grad = False
 
-
 """ Recreation of the last layers of BERT and fine tuning """
+
+
 class BERT_Arch(nn.Module):
     def __init__(self, bert):
         super(BERT_Arch, self).__init__()
@@ -167,6 +161,7 @@ class BERT_Arch(nn.Module):
 
         return x
 
+
 # pass the pre-trained BERT to our define architecture
 model = BERT_Arch(bert)
 
@@ -174,19 +169,19 @@ model = BERT_Arch(bert)
 model = model.to(device)
 
 # define the optimizer
-optimizer = AdamW(model.parameters(), lr = 1e-3)
+optimizer = AdamW(model.parameters(), lr=1e-3)
 
-#compute the class weights
+# compute the class weights
 class_wts = compute_class_weight(class_weight='balanced',
-                                 classes=np.unique(Y_train), # 2 classes
+                                 classes=np.unique(Y_train),  # 2 classes
                                  y=Y_train)
 
 # convert class weights to tensor
-weights= torch.tensor(class_wts,dtype=torch.float)
+weights = torch.tensor(class_wts, dtype=torch.float)
 weights = weights.to(device)
 
 # loss function
-cross_entropy  = nn.NLLLoss(weight=weights)
+cross_entropy = nn.NLLLoss(weight=weights)
 
 # number of training epochs
 epochs = 10
@@ -205,7 +200,7 @@ def train():
     for step, batch in enumerate(train_dataloader):
 
         # progress update after every 50 batches.
-        if step % 50 == 0 and not step == 0:
+        if step % 50 == 0 and step != 0:
             elapsed = round(time.time() - t0)
             print(f'  Batch {step}  of  {len(train_dataloader)}. Elapsed time : {elapsed:.0f}.')
 
@@ -267,7 +262,7 @@ def evaluate():
     for step, batch in enumerate(val_dataloader):
 
         # Progress update every 50 batches.
-        if step % 50 == 0 and not step == 0:
+        if step % 50 == 0 and step != 0:
             # Calculate elapsed time in minutes.
             elapsed = round(time.time() - t0)
 
@@ -330,18 +325,17 @@ for epoch in range(epochs):
     print(f'\nTraining Loss: {train_loss:.3f}')
     print(f'Validation Loss: {valid_loss:.3f}')
 
-
-#load weights of best model
+# load weights of best model
 path = 'saved_weights.pt'
 model.load_state_dict(torch.load(path))
 
 # get predictions for test data
 with torch.no_grad():
-  preds = model(test_seq.to(device), test_mask.to(device))
-  preds = preds.detach().cpu().numpy()
+    preds = model(test_seq.to(device), test_mask.to(device))
+    preds = preds.detach().cpu().numpy()
 
 # model's performance
-preds = np.argmax(preds, axis = 1)
+preds = np.argmax(preds, axis=1)
 print(classification_report(test_y, preds))
 
 # confusion matrix
